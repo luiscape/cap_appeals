@@ -7,10 +7,10 @@
 
 library(XML)
 library(RCurl)
-res <- xpathApply(doc, "//table[@class='view view-appeals-by-appeal-view view-id-appeals_by_appeal_view view-display-id-default view-dom-id-1']", xmlValue)
+# res <- xpathApply(doc, "//table[@class='view view-appeals-by-appeal-view view-id-appeals_by_appeal_view view-display-id-default view-dom-id-1']", xmlValue)
 
 
-downloadCAPs <- function(verbose = FALSE) {
+downloadAppeals <- function(verbose = FALSE) {
     message('Assembling a list of CAP documents.')
     message('Downloading CAP documents.')
     pb <- txtProgressBar(min = 0, max = 6, style = 3)
@@ -46,7 +46,10 @@ downloadCAPs <- function(verbose = FALSE) {
     }
     
     message('Done.')
-    return(list)
+    return(cap_list)
 }
 
-x <- downloadCAPs()
+list <- downloadAppeals()
+
+# writing CSV. 
+write.csv(list, 'data/appeals_list.csv', row.names = F)
