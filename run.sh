@@ -1,1 +1,1 @@
-Rscript code/download_all_appeals.R
+Rscript code/scraper.R
