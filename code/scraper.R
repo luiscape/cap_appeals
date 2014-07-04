@@ -110,3 +110,14 @@ list <- encodeTime(list)
 
 # writing CSV. 
 write.csv(list, 'data/appeals_list.csv', row.names = F)
+
+
+
+
+
+#### Extracting Links  ####
+url <- paste0(base_url, page, 1)
+hyperlinksYouNeed <- getNodeSet(htmlParse(url),"//table
+                                                //td
+                                                /a
+                                                /@href")
