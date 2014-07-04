@@ -31,6 +31,7 @@ downloadAppeals <- function(verbose = FALSE) {
         else cap_list <- rbind(cap_list, doc)
     }
     names(cap_list) <- 'document_name'
+    cap_list$id <- paste0('CAP-', 1:nrow(cap_list))
     cap_list$appeal_type <- 'Consolidated Appeal'
     
     # Flash appeals from page 6 until page 8
@@ -54,6 +55,7 @@ downloadAppeals <- function(verbose = FALSE) {
         else flash_list <- rbind(flash_list, doc)
     }
     names(flash_list) <- 'document_name'
+    flash_list$id <- paste0('FLA-', 1:nrow(flash_list))
     flash_list$appeal_type <- 'Flash Appeal'
     
     # Other appeals from page 8 until page 9
@@ -78,6 +80,7 @@ downloadAppeals <- function(verbose = FALSE) {
         else other_list <- rbind(other_list, doc)
     }
     names(other_list) <- 'document_name'
+    other_list$id <- paste0('OTH-', 1:nrow(other_list))
     other_list$appeal_type <- 'Other appeals'
     
     message('Done.')
