@@ -5,7 +5,7 @@
 # views-table cols-3 table field
 # views-field views-field-title table header
 # res <- xpathApply(doc, "//table[@class='view view-appeals-by-appeal-view view-id-appeals_by_appeal_view view-display-id-default view-dom-id-1']", xmlValue)
-
+# links class: views-field views-field-field-dms-link-value
 
 library(XML)
 library(RCurl)
@@ -14,7 +14,7 @@ library(countrycode)
 
 downloadAppeals <- function(verbose = FALSE) {
     base_url <- 'http://www.unocha.org/cap/appeals/by-appeal/results'
-    page <- '?page='  # 492 appeals in 11 pages -- starts at 0.
+    page <- '?page='  # 492 appeals in 9 pages -- starts at 0.
     
     message('Assembling a list of CAP documents.')
     pb <- txtProgressBar(min = 0, max = 6, style = 3)
@@ -112,12 +112,21 @@ list <- encodeTime(list)
 write.csv(list, 'data/appeals_list.csv', row.names = F)
 
 
-
-
-
 #### Extracting Links  ####
-url <- paste0(base_url, page, 1)
-hyperlinksYouNeed <- getNodeSet(htmlParse(url),"//table
-                                                //td
-                                                /a
-                                                /@href")
+getLinks <- function() {
+    pb <- txtProgressBar(min = 0, max = 9, style = 3)
+    for(i in 0:9) {
+        setTxtProgressBar(pb, i)
+        url <- paste0(base_url, page, i)
+        doc <- htmlParse(url)
+        link_it <- data.frame(hrefs =  xpathSApply(doc, '//*[@class="views-field views-field-field-dms-link-value"]/a',xmlGetAttr, 'href'))
+        if (i == 0) link_list <- link_it
+        else link_list <- rbind(link_list, link_it)
+    }
+    return(link_list)
+}
+
+link_list <- getLinks()
+
+# writing CSV. 
+write.csv(link_list, 'data/appeals_list.csv', row.names = F)
