@@ -129,4 +129,4 @@ getLinks <- function() {
 link_list <- getLinks()
 
 # writing CSV. 
-write.csv(link_list, 'data/appeals_list.csv', row.names = F)
+write.csv(link_list, 'data/link_list.csv', row.names = F)
