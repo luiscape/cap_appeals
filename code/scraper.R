@@ -1,12 +1,6 @@
 # Script to download all CAP appeals from the UNOCHA website.
 # There are 492 appeals.
 
-## HTML Structure
-# views-table cols-3 table field
-# views-field views-field-title table header
-# res <- xpathApply(doc, "//table[@class='view view-appeals-by-appeal-view view-id-appeals_by_appeal_view view-display-id-default view-dom-id-1']", xmlValue)
-# links class: views-field views-field-field-dms-link-value
-
 library(XML)
 library(RCurl)
 library(countrycode)
@@ -91,7 +85,28 @@ downloadAppeals <- function(verbose = FALSE) {
 list <- downloadAppeals()
 
 # Adding iso3 codes; around 50 don't encode.
-list$iso3 <- countrycode(list$document_name, 'country.name', 'iso3c')
+# This function deals with the exceptions
+addISO3 <- function(df = list) {
+    df$iso3 <- countrycode(df$document_name, 'country.name', 'iso3c')
+    
+    df$iso3 <- ifelse(grepl('Cameroun', df$document_name), 'CMR', df$iso3)
+    df$iso3 <- ifelse(grepl('Sénégal', df$document_name), 'SEN', df$iso3)
+    df$iso3 <- ifelse(grepl('Mauritanie', df$document_name), 'MRT', df$iso3)
+    df$iso3 <- ifelse(grepl('Mali', df$document_name), 'MLI', df$iso3)
+    df$iso3 <- ifelse(grepl('Sahel', df$document_name), 'SAHEL', df$iso3)
+    df$iso3 <- ifelse(grepl('Haïti', df$document_name), 'HTI', df$iso3)
+    df$iso3 <- ifelse(grepl('Great Lakes', df$document_name), 'GREAT LAKES', df$iso3)
+    df$iso3 <- ifelse(grepl('North Caucasus', df$document_name), 'NORTH CAUCASUS', df$iso3)
+    df$iso3 <- ifelse(grepl('South Asia', df$document_name), 'SOUTH ASIA', df$iso3)
+    df$iso3 <- ifelse(grepl('Indian Ocean', df$document_name), 'INDIAN OCEAN', df$iso3)
+    df$iso3 <- ifelse(grepl('Horn', df$document_name), 'HORN', df$iso3)
+    df$iso3 <- ifelse(grepl('Mindanao', df$document_name), 'PHL', df$iso3)
+    df$iso3 <- ifelse(is.na(df$iso3), 'WLD', df$iso3)
+    
+    return(df)
+}   
+list <- addISO3()
+
 
 
 encodeTime <- function(df = NULL) { 
@@ -114,6 +129,8 @@ write.csv(list, 'data/appeals_list.csv', row.names = F)
 
 #### Extracting Links  ####
 getLinks <- function() {
+    base_url <- 'http://www.unocha.org/cap/appeals/by-appeal/results'
+    page <- '?page='  # 492 appeals in 9 pages -- starts at 0.
     pb <- txtProgressBar(min = 0, max = 9, style = 3)
     for(i in 0:9) {
         setTxtProgressBar(pb, i)

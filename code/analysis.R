@@ -1,8 +1,7 @@
 ## Analysis script ## 
 library(ggplot2)
 
-# Overall plot of the appeals per year.
-ggplot(list) + geom_line(aes(date), stat = 'bin') 
+# 
+data <- read.csv('data/appeals_list.csv')
 
-# Overall plot of the appeals per year, in facets per type.
-ggplot(list) + geom_line(aes(date), stat = 'bin') + facet_wrap(~ appeal_type)
+nas <- data[is.na(data$iso3) == TRUE, ]
