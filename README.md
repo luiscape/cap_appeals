@@ -7,7 +7,7 @@ This repository contains all the code used in the crowd-sourcing initiative to e
 Problem
 -------
 
-There are **492** appeals in about **74 countries** or regions. There are *827* documents (a good number are duplicates in different formats, PDF / DOC) in the [CAPs website](http://www.unocha.org/cap/appeals/by-appeal/results?page=0).
+There are **492** appeals about **74 countries** or regions. There are *827* documents in the [CAPs website](http://www.unocha.org/cap/appeals/by-appeal/results?page=0). (A good number are duplicates in different formats, PDF / DOC).
 
 ![Comparing appeals by type.](plot/bar_plot_source.png)
 
