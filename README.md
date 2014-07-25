@@ -7,7 +7,7 @@ This repository contains all the code used in the crowd-sourcing initiative to e
 Problem
 -------
 
-There are **492** appeals in about **74 countries** or regions. There are *827* documents 
+There are **492** appeals in about **74 countries** or regions. There are *827* documents (a good number are duplicates in different formats, PDF / DOC) in the [CAPs website](http://www.unocha.org/cap/appeals/by-appeal/results?page=0).
 
 ![Comparing appeals by type.](plot/bar_plot_source.png)
 
@@ -25,9 +25,13 @@ South Africa (30) seems to be the country that has the largest number of appeals
 Solution
 --------
 
+The appeal documents are usually PDF files that contain important figures about the humanitarian response to a crisis. Among the most important figures is the 'Number of People Affected', 'Number of People in Need', and the 'Number of People Reached', among others.
 
+We could try an approach to extract those figures automatically. The problem, however, is that at throughout the 10 years of documentation available, there have been many ways to reference those figures, ranging from layout to linguistic differences. Moreover, those figures don't follow a strict methodology, and have been assembled by a combination of discretionary and political desicion-making.
 
-[Crowdcrafting](http://crowdcrafting.org/) is an open-source application created by the [Open Knowledge Foundation](http://blog.okfn.org/2013/09/17/crowdcrafting-putting-citizens-in-control-of-citizen-science/) to make easier the process of creating crowd-sourcing applications.
+With that in mind, we thought that humans reading the documents could be one of the best ways of extracting those figures accuratelly. Considering the number of documents that need to be analyzed, we opted for a crowdsourcing approach.
+
+[Crowdcrafting](http://crowdcrafting.org/) is an open-source application created by the [Open Knowledge Foundation](http://blog.okfn.org/2013/09/17/crowdcrafting-putting-citizens-in-control-of-citizen-science/) to make easier the process of creating crowd-sourcing applications. This repository contains resources necessary for creating a Crowdcrafting application that reads PDF documents, displays them to users, and asks them questions about a certain page. The idea is to count with the help of volunteers to extract and categorize the data out of the appeals documents using volunteers' cognition and judgement.
 
 
 
