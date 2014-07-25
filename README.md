@@ -35,7 +35,7 @@ With that in mind, we thought that humans reading the documents could be one of 
 
 
 
-Usage
+Usages
 -----
 
-This repository contains scripts mainly written in `R`. It also uses the package `[xpdf](http://www.foolabs.com/xpdf/download.html)` to convert PDF to plain text to do text analysis.
+This repository contains scripts mainly written in `R`. It also uses the package [xpdf](http://www.foolabs.com/xpdf/download.html) to convert PDF to plain text to do text analysis.
