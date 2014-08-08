@@ -67,7 +67,7 @@ country_s <- as.data.frame(table(data$iso3))
 names(country_s) <- c('iso3', 'count')
 country_s <- country_s[order(- country_s$count, country_s$iso3),]
 
-bar_plot_country <- ggplot(country_s, aes(reorder(country_s$iso3, - country_s$count), count) + 
+bar_plot_country <- ggplot(country_s, aes(reorder(country_s$iso3, - country_s$count), count)) + 
     theme_bw() +
     geom_bar(stat = 'identity', size = 1.3, fill = '#ED8600') +
 #     facet_wrap(~ appeal_type) +
