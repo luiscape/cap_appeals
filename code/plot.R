@@ -84,4 +84,4 @@ bar_plot_country <- ggplot(country_s, aes(reorder(country_s$iso3, - country_s$co
           axis.text.x = element_text(angle = 90, hjust = 1),
           axis.title.y = element_text(size = 7, face = 'italic'))
 
-ggsave('plot/bar_plot_country.png', bar_plot_country, height = 3.05, width = 13.35, units = 'in')
+ggsave('plot/bar_plot_country.png', bar_plot_country, height = 5.05, width = 13.35, units = 'in')

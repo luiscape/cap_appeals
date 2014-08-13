@@ -1,5 +1,5 @@
 # Script to download all CAP appeals from the UNOCHA website.
-# There are 492 appeals.
+# There are 493+ appeals.
 
 library(XML)
 library(RCurl)
@@ -11,7 +11,7 @@ downloadAppeals <- function(verbose = FALSE) {
     page <- '?page='  # 492 appeals in 9 pages -- starts at 0.
     
     message('Assembling a list of CAP documents.')
-    pb <- txtProgressBar(min = 0, max = 6, style = 3)
+    pb <- txtProgressBar(min = 0, max = 6, style = 3, char = ".")
     # CAP appeals go until page 6
     for(i in 0:6) {
         if (verbose == TRUE) message(paste('Page:', i))
@@ -29,9 +29,9 @@ downloadAppeals <- function(verbose = FALSE) {
     cap_list$appeal_type <- 'Consolidated Appeal'
     
     # Flash appeals from page 6 until page 8
-    message('Assembling a list of Flash appeals documents.')
+    message('Assembling a list of Flash Appeals documents.')
     if (verbose == TRUE) message(paste('Page:', i))
-    pb <- txtProgressBar(min = 6, max = 8, style = 3)
+    pb <- txtProgressBar(min = 6, max = 8, style = 3, char = ".")
     for(i in 6:8){
         setTxtProgressBar(pb, i)
         url <- paste0(base_url, page, i)
@@ -53,8 +53,8 @@ downloadAppeals <- function(verbose = FALSE) {
     flash_list$appeal_type <- 'Flash Appeal'
     
     # Other appeals from page 8 until page 9
-    message('Assembling a list of other appeals documents.')
-    pb <- txtProgressBar(min = 8, max = 9, style = 3)
+    message('Assembling a list of Other Appeals documents.')
+    pb <- txtProgressBar(min = 8, max = 9, style = 3, char = ".")
     for(i in 8:9){
         if (verbose == TRUE) message(paste('Page:', i))
         setTxtProgressBar(pb, i)
@@ -87,21 +87,36 @@ list <- downloadAppeals()
 # Adding iso3 codes; around 50 don't encode.
 # This function deals with the exceptions
 addISO3 <- function(df = list) {
+    message('Adding country codes.\n')
+    
+    # running the general package
     df$iso3 <- countrycode(df$document_name, 'country.name', 'iso3c')
     
+    ## correcting regex errors
+    # country basis
+    df$iso3 <- ifelse(is.na(df$iso3), 'WLD', df$iso3)
     df$iso3 <- ifelse(grepl('Cameroun', df$document_name), 'CMR', df$iso3)
     df$iso3 <- ifelse(grepl('Sénégal', df$document_name), 'SEN', df$iso3)
     df$iso3 <- ifelse(grepl('Mauritanie', df$document_name), 'MRT', df$iso3)
     df$iso3 <- ifelse(grepl('Mali', df$document_name), 'MLI', df$iso3)
-    df$iso3 <- ifelse(grepl('Sahel', df$document_name), 'SAHEL', df$iso3)
     df$iso3 <- ifelse(grepl('Haïti', df$document_name), 'HTI', df$iso3)
+    df$iso3 <- ifelse(grepl('Mindanao', df$document_name), 'PHL', df$iso3)
+    df$iso3 <- ifelse(grepl('Central African Republic', df$document_name), 'CAF', df$iso3)
+    df$iso3 <- ifelse(grepl('République Centrafricaine', df$document_name), 'CAF', df$iso3)
+    df$iso3 <- ifelse(grepl('Guinea', df$document_name), 'GIN', df$iso3)
+    df$iso3 <- ifelse(grepl('Bénin', df$document_name), 'BEN', df$iso3)
+    
+    # crisis basis
     df$iso3 <- ifelse(grepl('Great Lakes', df$document_name), 'GREAT LAKES', df$iso3)
     df$iso3 <- ifelse(grepl('North Caucasus', df$document_name), 'NORTH CAUCASUS', df$iso3)
     df$iso3 <- ifelse(grepl('South Asia', df$document_name), 'SOUTH ASIA', df$iso3)
     df$iso3 <- ifelse(grepl('Indian Ocean', df$document_name), 'INDIAN OCEAN', df$iso3)
     df$iso3 <- ifelse(grepl('Horn', df$document_name), 'HORN', df$iso3)
-    df$iso3 <- ifelse(grepl('Mindanao', df$document_name), 'PHL', df$iso3)
-    df$iso3 <- ifelse(is.na(df$iso3), 'WLD', df$iso3)
+    df$iso3 <- ifelse(grepl('Sahel', df$document_name), 'SAHEL', df$iso3)
+    df$iso3 <- ifelse(grepl('West Africa', df$document_name), 'WEST AFRICA', df$iso3)
+    df$iso3 <- ifelse(grepl('Southern African Region', df$document_name), 'SOUTHERN AFRICAN REGION', df$iso3)
+    df$iso3 <- ifelse(grepl('Central Africa Region', df$document_name), 'CENTRAL AFRICAN REGION', df$iso3)
+
     
     return(df)
 }   
@@ -110,6 +125,7 @@ list <- addISO3()
 
 
 encodeTime <- function(df = NULL) { 
+    message('Encoding dates.\n')
     # returns only the dates strings (after the last comma)
     df$date <- gsub('(.+?),', "", df$document_name)
     
@@ -128,10 +144,12 @@ write.csv(list, 'data/appeals_list.csv', row.names = F)
 
 
 #### Extracting Links  ####
+# TODO: extract only PDF links. Reject other links.
 getLinks <- function() {
+    message('Extracting document links for crowdsourcing.\n')
     base_url <- 'http://www.unocha.org/cap/appeals/by-appeal/results'
     page <- '?page='  # 492 appeals in 9 pages -- starts at 0.
-    pb <- txtProgressBar(min = 0, max = 9, style = 3)
+    pb <- txtProgressBar(min = 0, max = 9, style = 3, char = ".")
     for(i in 0:9) {
         setTxtProgressBar(pb, i)
         url <- paste0(base_url, page, i)
@@ -140,9 +158,9 @@ getLinks <- function() {
         if (i == 0) link_list <- link_it
         else link_list <- rbind(link_list, link_it)
     }
+    link_list[nchar(as.character(link_list$href)) > 4, ]
     return(link_list)
 }
-
 link_list <- getLinks()
 
 # writing CSV. 
