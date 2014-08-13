@@ -7,7 +7,7 @@ This repository contains all the code used in the crowd-sourcing initiative to e
 Problem
 -------
 
-There are **492** appeals about **74 countries** or regions. There are *827* documents in the [CAPs website](http://www.unocha.org/cap/appeals/by-appeal/results?page=0). (A good number are duplicates in different formats, PDF / DOC).
+There are **493** appeals about **76 crises**. You can find a list of appeals by classification type [here](https://github.com/luiscape/cap_appeals/blob/master/data/appeals_list.csv) as available in [CAP's website](http://www.unocha.org/cap/appeals/by-appeal/results?page=0).
 
 ![Comparing appeals by type.](plot/bar_plot_source.png)
 
@@ -18,7 +18,7 @@ Here we can see the distribution of reports per country (or crisis).
 ![Comparing the type of appeals by country / crisis.](plot/steps_country.png)
 
 South Africa (30) seems to be the country that has the largest number of appeals, followed by South Sudan (26) and Somalia (22).
-![Number of appeals per country.](plot/bar_plot_appeals_per_country.png)
+![Number of appeals per country.](plot/bar_plot_country.png)
 
 
 
