@@ -54,6 +54,32 @@ The idea is to count with the help of qualified volunteer readers  to extract an
 We need to design the data collection strategy, explore feasible applications (i.e. [software](http://crowdcrafting.org/)), and construct a robust methodology before moving forward.
 
 
+
+## Crowdsourcing
+
+Considering the crowdsourcing could be the prefered approach, this section explores software and solutions in that area.
+
+The prefered approach is to have each volunteer reader (from now on simply 'reader') read documents in full. That would allow us to rely that the figures reported by the reader are coherent with the overall message of the document, and not a disconnected and confusing page. Depending on a series of variable, each reader would read one or more documents.
+
+We need to extract figures from roughly 493 documents. One of the biggest challenges is the number of pages that each document has. If we are to ask readers to read documents in full we have to give each reader an appropriate number of pages to read, without overwhelming them. The summary statistics of the number of pages are:
+- 1st Quarter: ~42 pages
+- Median: ~70 pages
+- Mean: ~79 pages
+- 3rd Quarter: ~104 pages
+- Max: ~552 pages
+
+The documents follow a normal distribution, but contains a few outliers that skews the distribution to the right as seen:
+![Frequency of the number of pages per document.](plot/histogram_outliers.png)
+
+Other useful measurements are:
+- Number of Outliers (3 x Standard Deviation | x > ~163): 19 documents
+- > 200 pages: 11 documents
+- > 100 pages: 133 documents
+
+
+[Crowdcrafting](http://crowdcrafting.org/) is an open-source application created by the [Open Knowledge Foundation](http://blog.okfn.org/2013/09/17/crowdcrafting-putting-citizens-in-control-of-citizen-science/) to make easier the process of creating crowd-sourcing applications. This repository contains resources necessary for creating a Crowdcrafting application that reads PDF documents, displays them to users, and asks them questions about a certain page. The idea is to count with the help of volunteers to extract and categorize the data out of the appeals documents using volunteers' cognition and judgement.
+
+
 ## Usages
 
 This repository contains scripts mainly written in `R`. It also uses the package [xpdf](http://www.foolabs.com/xpdf/download.html) to convert PDF to plain text to do text analysis.
