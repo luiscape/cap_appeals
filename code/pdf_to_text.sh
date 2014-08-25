@@ -1,4 +1,5 @@
-for file in /test/appeals_documents/*
-do
-  cmd [option] $file >> results.out
+#!/bin/sh
+for f in *.pdf; do
+        echo -n "$f"
+        pdfinfo "$f" 2>/dev/null | grep Pages | cut -d ":" -f 2
 done

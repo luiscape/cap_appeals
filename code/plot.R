@@ -9,7 +9,7 @@ data$date <- as.Date(data$date)
 # bar plot: number of documents by source
 bar_plot_source <- ggplot(data, aes(date, fill = appeal_type)) + theme_bw() +
     geom_bar(stat = 'bin', size = 1.3) +
-    facet_wrap(~ appeal_type) +
+    facet_grid(appeal_type ~ .) +
     ylab("Number of Documents") + xlab("") +
     theme(panel.border = element_rect(linetype = 0),
           strip.background = element_rect(colour = "white", fill = "white"),
@@ -17,10 +17,28 @@ bar_plot_source <- ggplot(data, aes(date, fill = appeal_type)) + theme_bw() +
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           legend.title = element_blank(),
-          axis.title.y = element_text(size = 7, face = 'italic'),
+          axis.title.y = element_text(size = 10, face = 'italic'),
           legend.key = element_blank())
 
 ggsave('plot/bar_plot_source.png', bar_plot_source, height = 3.05, width = 13.35, units = 'in')
+
+## plotting ##
+# bar plot: number of documents by source
+bar_plot_source <- ggplot(data, aes(date, fill = appeal_type)) + theme_bw() +
+    geom_bar(stat = 'bin', size = 1.3) +
+    facet_grid(appeal_type ~ .) +
+    ylab("Number of Documents") + xlab("") +
+    theme(panel.border = element_rect(linetype = 0),
+          strip.background = element_rect(colour = "white", fill = "white"),
+          panel.background = element_rect(colour = "white"),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          legend.title = element_blank(),
+          axis.title.y = element_text(size = 10, face = 'italic'),
+          legend.key = element_blank())
+
+ggsave('plot/bar_plot_source.png', bar_plot_source, height = 3.05, width = 13.35, units = 'in')
+
 
 
 # bar plot: number of documents by source, but colored by country.

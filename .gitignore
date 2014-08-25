@@ -4,3 +4,5 @@ data/appeal_documents/*
 data/appeal_documents/**
 test/*
 test/**
+code/venv/*
+code/venv/**
