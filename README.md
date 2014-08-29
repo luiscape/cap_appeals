@@ -18,8 +18,9 @@ CAP appeals are important because they consolidate a common-ground, agreed pictu
 ## Files
 The code made available in this repository scrapes [UNOCHA's CAP Appeals website](http://www.unocha.org/cap/appeals/by-appeal/results?page=0) and assembles two files:
 
--`LIST:` A *CSV* list with all the appeal names, their crisis reference, category, date (parsed from the title), and unique code. Available [here](https://ds-ec2.scraperwiki.com/3grrlc8/pchhes1jjv0k8fi/http/appeals_list.csv).
--`ZIP:` A zip package with the collection of all *PDF* files found on UNOCHA's CAP website. Available [here](https://ds-ec2.scraperwiki.com/3grrlc8/pchhes1jjv0k8fi/http/all_appeal_documents.zip).
+- `LIST:` A *CSV* list with all the appeal names, their crisis reference, category, date (parsed from the title), and unique code. Available [here](https://ds-ec2.scraperwiki.com/3grrlc8/pchhes1jjv0k8fi/http/appeals_list.csv).
+
+- `ZIP:` A zip package with the collection of all *PDF* files found on UNOCHA's CAP website. Available [here](https://ds-ec2.scraperwiki.com/3grrlc8/pchhes1jjv0k8fi/http/all_appeal_documents.zip).
 
 Those files are generated everyday in a [ScraperWiki](http://www.scraperwiki.com) instance. They are created at around midnight UTC. Make sure to download the most up-to-date file *before* you start working.
 
