@@ -1,0 +1,6 @@
+.RData
+.Rhistory
+data/appeal_documents/*
+data/appeal_documents/**
+data/all_appeal_documents.zip
+http/all_appeal_documents.zip
