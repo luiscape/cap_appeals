@@ -18,19 +18,19 @@ source(paste(b_folder, 'code/test.R', sep =""))
 ############## Scraping Appeals List ##############
 ###################################################
 ###################################################
-       
+
 # assembling appeals list from UNOCHA's website
 # the scraper spins throught all the pages in UNOCHA CAP
 # website and extracts the table information from each appeal.
-# it also adds a unique code for each appeal. 
+# it also adds a unique code for each appeal.
 # other functions below will encode an appeal based on its country name
 # or crisis name, add a time stamp based on the appeals title, and
-# add a link to its source document, and a document name. 
+# add a link to its source document, and a document name.
 
 scrapeList <- function(verbose = FALSE) {
  base_url <- 'http://www.unocha.org/cap/appeals/by-appeal/results'
  page <- '?page='  # 490+ appeals in 10 pages -- starts at 0.
- 
+
  # CAP appeals go until page 7
  message('Assembling a list of CAP documents.')
  start = 0
@@ -43,7 +43,7 @@ scrapeList <- function(verbose = FALSE) {
    if (i == end) {
      table <- getNodeSet(htmlParse(url),"//table")[[1]]
      doc <- readHTMLTable(table, useInternal = TRUE)
-   } 
+   }
    else doc <- readHTMLTable(getURL(url), useInternal = TRUE)
    doc <- data.frame(doc)
    doc <- doc[1]
@@ -52,10 +52,10 @@ scrapeList <- function(verbose = FALSE) {
    else cap_list <- rbind(cap_list, doc)
  }
  names(cap_list) <- 'document_name'
- cap_list$id <- paste0('CAP-', 1:nrow(cap_list))
+ cap_list$id <- paste0('CAP-', nrow(cap_list):1)
  cap_list$appeal_type <- 'Consolidated Appeal'
- 
- 
+
+
  # Flash appeals from page 7 until page 9
  start = 7
  end = 8
@@ -79,7 +79,7 @@ scrapeList <- function(verbose = FALSE) {
    else flash_list <- rbind(flash_list, doc)
  }
  names(flash_list) <- 'document_name'
- flash_list$id <- paste0('FLA-', 1:nrow(flash_list))
+ flash_list$id <- paste0('FLA-', nrow(flash_list):1)
  flash_list$appeal_type <- 'Flash Appeal'
  
  
@@ -107,7 +107,7 @@ scrapeList <- function(verbose = FALSE) {
    else other_list <- rbind(other_list, doc)
  }
  names(other_list) <- 'document_name'
- other_list$id <- paste0('OTH-', 1:nrow(other_list))
+ other_list$id <- paste0('OTH-', nrow(other_list):1)
  other_list$appeal_type <- 'Other appeals'
  
  message('Done.')
