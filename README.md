@@ -93,9 +93,6 @@ Other useful measurements are:
 ## Usage
 This repository contains scripts mainly written in `R (3.0+)`.
 
-<<<<<<< HEAD
-### Dependencies
-R packages: `tm`, `ggplot2`, `RCurl`, `countrycode`, and `XML`.
-=======
-This repository contains scripts mainly written in `R`. It also uses the package [xpdf](http://www.foolabs.com/xpdf/download.html) to convert PDF to plain text to do text analysis.
->>>>>>> 5eefd26261a071093dbe78cd80d4ba489e8ed945
+## Dependencies
+This repository contains scripts mainly written in `R`. It also uses the command line tool [pdftk](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/) to manipulate PDF files. Installing pdftk on a Mac can be a bit of a hassle. It worked for me installing from this repository: https://github.com/robinhouston/pdftk
+
