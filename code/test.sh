@@ -1,0 +1,2 @@
+t='hello'
+echo $t
