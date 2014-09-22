@@ -57,8 +57,6 @@ scrapeList <- function(url) {
       it$researcher <- resList$name[i]  
     }
     
-    # cleaning white space (everywhere!)
-    
     # assembling a single data.frame
     if (i == 1) output <- it
     else output <- rbind(output, it)

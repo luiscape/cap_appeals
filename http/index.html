@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>CAP Progress</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Loading Bootstrap -->
+    <link href="css/vendor/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Loading Flat UI -->
+    <link href="css/flat-ui.css" rel="stylesheet">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
+    <!--[if lt IE 9]>
+      <script src="js/vendor/html5shiv.js"></script>
+      <script src="js/vendor/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- specific css -->
+    <style>
+    body {
+      text-align: center;
+      padding-top: 100px;
+    }
+
+    /* centered columns styles */
+    .row-centered {
+        text-align:center;
+    }
+    .col-centered {
+        display:inline-block;
+        float:none;
+        /* reset the text-align */
+        text-align:left;
+        /* inline-block space fix */
+        margin-right:-4px;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+        <h3>CAP Progress</h3>
+        <p>(For <strong>plan B</strong> researchers).<p>
+        <div>
+          <div class='col-xs-12 col-md-4 col-centered'>
+            <div class='tile tile-hot'>
+              <!-- description of collection status -->
+              <p>
+                We have collected <span id="capProgressFigure"></span> out of ~3.500 figures.
+                We are around <span id="capProgressFigurePercentage"></span> done.
+              </p>
+
+              <!-- progress bar -->
+              <div id="capProgressBar" class='progress'></div>
+
+              <p>Keep up the good work folks!</p>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- loading helper packages -->
+    <script src='js/d3.min.js'></script>
+    <script src='js/jsonpath.js'></script>
+
+    <!-- jquery -->
+    <script src="js/vendor/jquery.min.js"></script>
+
+    <!-- loading the js scripts from the template -->
+    <script src="js/flat-ui.min.js"></script>
+
+    <!-- getting the progress bar -->
+    <script>
+    d3.json("https://ds-ec2.scraperwiki.com/3grrlc8/pchhes1jjv0k8fi/sql?q=select%20*%20from%20inputData", function(error, json) {
+     if (error) return console.log('There was an error:' + error);
+     data = json;
+
+     var capProgressBar;
+     capProgressBar = jsonPath.eval(data, '$..docID');
+
+     // sanity check
+     var progress = Math.ceil((capProgressBar.length / 3500) * 100);
+     console.log('Progress: ', progress, '%');
+
+     // filling in the progress bar
+     var p = '<div class="progress-bar" style="width:' + progress + '%;"></div>'
+     var doc = document.getElementById('capProgressBar');
+     doc.innerHTML = p;
+
+     // filling in the progress information
+     var docFigPercentage = document.getElementById('capProgressFigurePercentage');
+     docFigPercentage.innerHTML = '<strong>' + progress + '%' + '</strong>';
+
+     var docFig = document.getElementById('capProgressFigure');
+     docFig.innerHTML = '<strong>' + capProgressBar.length + '</strong>';
+
+    });
+    </script>
+  </body>
+</html>
