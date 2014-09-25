@@ -22,6 +22,8 @@ The code made available in this repository scrapes [UNOCHA's CAP Appeals website
 
 - `ZIP:` A zip package with the collection of all *PDF* files found on UNOCHA's CAP website. Available [here](https://ds-ec2.scraperwiki.com/3grrlc8/pchhes1jjv0k8fi/http/all_appeal_documents.zip).
 
+- `TXT:` A zip file with all the PDF documents converted to TXT files. This file makes it easier to extract the corpus of text and perform text mining activities. The file can be downloaded [here](https://ds-ec2.scraperwiki.com/3grrlc8/pchhes1jjv0k8fi/http/All_Documents_in_TXT.zip).
+
 Those files are generated everyday in a [ScraperWiki](http://www.scraperwiki.com) instance. They are created at around midnight UTC. Make sure to download the most up-to-date file *before* you start working.
 
 
