@@ -1,0 +1,222 @@
+#Packages to Install
+install.packages('tm')
+install.packages('SnowballC')
+install.packages('wordcloud')
+install.packages('irlba')
+source("http://bioconductor.org/biocLite.R")
+biocLite("Rgraphviz")
+install.packages(c("wordcloud","igraph","RColorBrewer","scatterplot3d","knitr","shiny"),repos="http://cran.r-project.org/")
+install.packages("SOMbrero", repos="http://R-Forge.R-project.org")
+
+#Load In Packages
+library(tm)
+library(SnowballC)
+library(irlba)
+library(wordcloud)
+library(Rgraphviz)
+library(SOMbrero)
+
+######################################################
+###Convert PDFs to Text and Read Text into a Data Object
+###EDIT:  This is only for the English Documents
+#Set the Working Directory
+setwd("C:/Users/nreinhart/Text Mining/UN Project/CAP/EN")
+
+#Create List of PDF Files
+capDestination<-"./"
+capLocalListPDF<-as.matrix(list.files(path = capDestination, pattern="pdf",full.names=TRUE))
+
+#Convert PDF Files to Text
+#Note:  You need to have pdftotext.exe from the XPDF program by Foo Labs
+#Note: Additionally, I'll note that I think there's a way to do this step with tm package... but for the life of me I couldnt' figure it out.
+message("Starting Conversion CAP PDFs to Text Files")
+lapply(capLocalListPDF, function(i) system(paste('"C:/Users/nreinhart/Text Mining/UN Project/PDFtoTEXT/pdftotext.exe"',paste0('"', i, '"')), wait = FALSE) )
+message("Finished Conversion CAP PDFs to Text Files")
+
+#Create List of Text Documents
+capLocalListTXT<-as.matrix(list.files(path = capDestination, pattern="txt",full.names=TRUE))
+
+#Create Data Object to Hold All Text from All Documents
+master<-matrix()
+message("Starting Text Read and Input to Master")
+for (i in 1:nrow(capLocalListTXT)){
+master[i]<-paste(readLines(capLocalListTXT[i]),collapse=" ")
+}
+
+
+
+
+
+#Write out CSV
+#Note:  This is a functionally useless step.  Excel has character limits for cells, so this makes a 98MB useless csv.
+write.csv(master,"./master.csv",sep=",")
+######################################################
+######################################################
+
+
+######################################################
+###Initial Text Mining Cleaning
+
+#Convert Text Data Object to Corpus for tm package
+capTM<-Corpus(VectorSource(master))
+
+#Remove Extra White Space
+#tm_map is the equivalent of the apply function but for Corpus objects.
+capTM<-tm_map(capTM,stripWhitespace)
+
+#Remove Punctuation
+capTM<-tm_map(capTM,removePunctuation)
+
+#Convert all characters to lower case
+capTM<-tm_map(capTM,tolower)
+
+#Remove numbers
+capTM<-tm_map(capTM,removeNumbers)
+
+#Remove stop words
+capTM<-tm_map(capTM,removeWords,stopwords("english"))
+
+#Reconvert to a PlainTextDocument
+capTM <- tm_map(capTM, PlainTextDocument)
+
+#Stem the Words in the Document
+capTM <- tm_map(capTM, stemDocument, "english")
+
+#Create Document Term Matrix
+capTMdtm<-DocumentTermMatrix(capTM)
+
+#Remove SparseTerms
+capTMdtm<-removeSparseTerms(capTMdtm, 0.20)
+######################################################
+######################################################
+
+######################################################
+###Initial Explorations
+
+#Find Top 200 Most Occuring Words
+capTMdtmAsMatrix<-as.matrix(capTMdtm)
+sort.capTMdtmAsMatrix<-as.matrix(sort(colSums(capTMdtmAsMatrix),decreasing=TRUE))
+newStopWords<-head(row.names(sort.capTMdtmAsMatrix),500)
+write.csv(newStopWords,"./stop.csv")
+#NOTE: Need to Have Mark,Luis,Lulu, and UN folks look at this list and whittle it down
+
+#Find Words that have correlation of at least .5 with "affect"
+findAssocs(capTMdtm, "affect", 0.5)
+head(findAssocs(capTMdtm, "affect", 0.5),n=50L)
+#NOTE: This section needs to be used to find correlations for 
+######################################################
+######################################################
+
+######################################################
+###Initial Graphics - Should be used only if needed)
+
+#Correlation Plot of Affect Top 20 Words
+library(Rgraphviz)
+assocsAffect<-as.data.frame(findAssocs(capTMdtm, "affect", 0.50))
+assocsAffectWords<-rownames(assocsAffect)
+
+png("./CorrelationPlotOfAffect.png",width=7,height=7,units="in", res=1400)
+plot(capTMdtm,terms=assocsAffectWords,cor.Threshold=0.5)
+dev.off()
+
+#Generate a WordCloud
+capTMdtmAsMatrix<-as.matrix(capTMdtm)
+freqCapTMdtmAsMatrix<-as.matrix(colSums(capTMdtmAsMatrix))
+sort.freqCapTMdtmAsMatrix<-as.matrix(sort(freqCapTMdtmAsMatrix, decreasing=TRUE))
+sorted.capTMdtmAsMatrix<-sort(colSums(capTMdtmAsMatrix),decreasing=TRUE)
+capNames<-names(sorted.capTMdtmAsMatrix)
+color.list <- brewer.pal(8,"Dark2")
+wordcloud(rownames(freqCapTMdtmAsMatrix), freqCapTMdtmAsMatrix[,1],min.freq=1000, max.words=100,random.order=FALSE,colors=color.list)
+
+png("./WordCloudProofOfConcept.png",width=7,height=7,units="in", res=1400)
+wordcloud(rownames(freqCapTMdtmAsMatrix), freqCapTMdtmAsMatrix[,1],min.freq=50,random.order=FALSE,colors=color.list)
+dev.off()
+######################################################
+######################################################
+
+######################################################
+###Advanced Exploration - Inverse Term Frequency
+
+#Create Document Term Matrix and Term Document Matrix with Inverse Document Frequency
+capTMtdmIDF<-TermDocumentMatrix(capTM, control = list(weighting = function(x) weightTfIdf(x, normalize = FALSE)))
+capTMdtmIDF<-DocumentTermMatrix(capTM, control = list(weighting = function(x) weightTfIdf(x, normalize = FALSE)))
+
+#Remove SparseTerms for Both Types
+capTMdtmIDF<-removeSparseTerms(capTMdtmIDF, .20)
+capTMtdmIDF<-removeSparseTerms(capTMtdmIDF, .20)
+
+#Convert into Data Frames
+df.capTMdtmIDF<-as.data.frame((inspect(capTMdtmIDF)))
+df.capTMtdmIDF<-as.data.frame((inspect(capTMtdmIDF)))
+
+#Add Document Names
+rownames(df.capTMdtmIDF)<-capLocalListTXT
+colnames(df.capTMtdmIDF)<-capLocalListTXT
+
+#Hierarchichal Clustering - Utilizes TDM
+capDist<-dist(df.capTMtdmIDF,method="euclidean")
+capDistClust<-hclust(capDist,method="ward.D")
+plot(capDistClust)
+#Obviously too many observations.  Cut into more manageable pieces
+capDistClust.10<-as.matrix(cutree(capDistClust,10))
+table(capDistClust.10)
+#These pieces are still sort of unwieldly but at least a bit more meaningful.
+write.csv(capDistClust.10,"./clust.csv")
+
+#Kmean Clustering - Utilizes DTM
+#Elbow Plot of WSS
+#Taken from: http://stackoverflow.com/questions/15376075/cluster-analysis-in-r-determine-the-optimal-number-of-clusters
+mydata <- df.capTMtdmIDF
+wss <- (nrow(mydata)-1)*sum(apply(mydata,2,var))
+  for (i in 2:50) wss[i] <- sum(kmeans(mydata,
+                                       centers=i)$withinss)
+plot(1:50, wss, type="b", xlab="Number of Clusters",
+     ylab="Within groups sum of squares")
+
+#Kmeans Clustering
+#NOTE: From the Elbow Plot I've opted for 30.  While analytically difficult, I think this will be a good level of granularity.
+capKmeans<-kmeans(df.capTMtdmIDF,centers=30,iter.max=50, nstart=50)
+clust.capKmeans<-as.data.frame(capKmeans$cluster)
+write.csv(clust.capKmeans,"./kmeans.csv")
+#NOTE: I feel like this has resulted in a decent abstraction of groupings of words
+
+#Kmeans clustering with PCA
+#Create PCA
+#Cribbed from: http://www.statmethods.net/advstats/factor.html
+PCA<-princomp(df.capTMtdmIDF,cor=TRUE)
+loadings(PCA) # pc loadings 
+plot(PCA,type="lines") # scree plot 
+df.PCA<-as.data.frame(PCA$scores)
+biplot(PCA)
+
+#Kmeans of PCA
+mydata <- df.PCA
+wss <- (nrow(mydata)-1)*sum(apply(mydata,2,var))
+  for (i in 2:50) wss[i] <- sum(kmeans(mydata,
+                                       centers=i)$withinss)
+plot(1:50, wss, type="b", xlab="Number of Clusters",
+     ylab="Within groups sum of squares")
+
+capPCAKmeans<-kmeans(df.PCA,centers=30,iter.max=50, nstart=50)
+plot(capPCAKmeans$centers)
+write.csv(as.data.frame(capPCAKmeans$cluster),"./PCAKmeansClusters.csv")
+
+
+#SOM
+capSOM<-trainSOM(df.capTMtdmIDF, dimension=c(10,10))
+ppi<-800
+png("./SOMWord.png",width=10*ppi,height=6.8*ppi, res=ppi)
+plot(capSOM, what = "obs", type = "names", scale=c(.90,.45),main="SOM Word Clusters")
+dev.off()
+write.csv(as.data.frame(capSOM$clustering),"./SOMClusters.csv")
+
+#SOM with Super Clusters
+plot(superClass(capSOM))
+super.capSOM<-superClass(capSOM,k=8)
+plot(super.capSOM,plot.var=FALSE)
+
+#Find Small and Large Super Clusters
+capSOMSub<-as.data.frame(capSOM$clustering)
+capSOMSuper<-as.data.frame(super.capSOM$cluster)
+write.csv(capSOMSub,"./combiner1.csv")
+write.csv(capSOMSuper,"./combiner2.csv")
