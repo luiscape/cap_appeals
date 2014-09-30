@@ -203,6 +203,7 @@ write.csv(as.data.frame(capPCAKmeans$cluster),"./PCAKmeansClusters.csv")
 
 
 #SOM
+set.seed(123)
 capSOM<-trainSOM(df.capTMtdmIDF, dimension=c(10,10))
 ppi<-800
 png("./SOMWord.png",width=10*ppi,height=6.8*ppi, res=ppi)
